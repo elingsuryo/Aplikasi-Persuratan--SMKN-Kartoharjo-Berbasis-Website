@@ -17,7 +17,7 @@ type Server struct {
 	*echo.Echo
 }
 
-func NewServer(cfg *config.Config, publicRoutes, privateRoutes []route.Route) *Server {
+func NewServer(cfg *config.Config, publicRoutes []route.Route) *Server {
 	e := echo.New()
 	v1 := e.Group("/api/v1")
 	if len(publicRoutes) > 0 {
@@ -25,13 +25,6 @@ func NewServer(cfg *config.Config, publicRoutes, privateRoutes []route.Route) *S
 			v1.Add(route.Method, route.Path, route.Handler)
 	}
 }
-
-	if len(privateRoutes) > 0 {
-		for _, route := range privateRoutes {
-			v1.Add(route.Method, route.Path, route.Handler, JWTMiddleware(cfg.JWTConfig.SecretKey), RBACMiddleware(route.Roles))
-	}
-}
-
 	return &Server{e}
 }
 

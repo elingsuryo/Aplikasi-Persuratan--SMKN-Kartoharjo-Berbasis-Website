@@ -3,14 +3,15 @@ package repository
 import (
 	"context"
 
-	"github.com/elingsuryo/Aplikasi-Persuratan--SMKN-Kartoharjo-Berbasis-Website/entity"
+	"website-penyuratan-smk-kartoharjo/internal/entity"
+
 	"gorm.io/gorm"
 )
 
 type UserRepository interface {
 	GetByUsername(ctx context.Context, username string) (*entity.User, error)
-    GetByResetPasswordToken(ctx context.Context, token string) (*entity.User, error)
-    GetByVerifyEmailToken(ctx context.Context, token string) (*entity.User, error)
+    // GetByResetPasswordToken(ctx context.Context, token string) (*entity.User, error)
+    // GetByVerifyEmailToken(ctx context.Context, token string) (*entity.User, error)
 	GetAll(ctx context.Context) ([]entity.User, error)
     Create(ctx context.Context, user *entity.User) error
     Update(ctx context.Context, user *entity.User) error
@@ -65,18 +66,18 @@ func (u *userRepository) GetByID(ctx context.Context, id int64) (*entity.User, e
     return result, nil
 }
 
-func (u *userRepository) GetByResetPasswordToken(ctx context.Context, token string) (*entity.User, error) {
-    result := new(entity.User)
-    if err := u.db.WithContext(ctx).Where("reset_password_token = ?", token).First(&result).Error; err != nil {
-        return nil, err
-    }
-    return result, nil
-}
+// func (u *userRepository) GetByResetPasswordToken(ctx context.Context, token string) (*entity.User, error) {
+//     result := new(entity.User)
+//     if err := u.db.WithContext(ctx).Where("reset_password_token = ?", token).First(&result).Error; err != nil {
+//         return nil, err
+//     }
+//     return result, nil
+// }
 
-func (u *userRepository) GetByVerifyEmailToken(ctx context.Context, token string) (*entity.User, error) {
-    result := new(entity.User)
-    if err := u.db.WithContext(ctx).Where("verify_email_token = ?", token).First(&result).Error; err != nil {
-        return nil, err
-    }
-    return result, nil
-}
+// func (u *userRepository) GetByVerifyEmailToken(ctx context.Context, token string) (*entity.User, error) {
+//     result := new(entity.User)
+//     if err := u.db.WithContext(ctx).Where("verify_email_token = ?", token).First(&result).Error; err != nil {
+//         return nil, err
+//     }
+//     return result, nil
+// }

@@ -3,16 +3,17 @@ package handler
 import (
 	"net/http"
 
-	"github.com/elingsuryo/Aplikasi-Persuratan--SMKN-Kartoharjo-Berbasis-Website/internal/http/dto"
-	// "github.com/elingsuryo/movie-app/internal/service"
-	"github.com/elingsuryo/Aplikasi-Persuratan--SMKN-Kartoharjo-Berbasis-Website/pkg/response"
+	"website-penyuratan-smk-kartoharjo/internal/http/dto"
+	"website-penyuratan-smk-kartoharjo/internal/service"
+	"website-penyuratan-smk-kartoharjo/pkg/response"
+
 	"github.com/labstack/echo/v4"
 )
 
 
 type UserHandler struct {
 	tokenService service.TokenService
-	userService	service.UserService
+	userService service.UserService
 }
 
 func NewUserHandler(tokenService service.TokenService, userService	service.UserService) UserHandler {
@@ -108,17 +109,17 @@ func (h *UserHandler) UpdateUser(ctx echo.Context) error {
 
 
 func (h *UserHandler) DeleteUser(ctx echo.Context) error {
-	var req dto.GetMovieByIDRequest
+	var req dto.GetUserByIDRequest
 	if err := ctx.Bind(&req); err != nil {
 		return ctx.JSON(http.StatusBadRequest, response.ErrorResponse(http.StatusBadRequest, err.Error()))
 	}
 
-	movie,err :=  h.userService.GetByID(ctx.Request().Context(), req.ID)
+	user,err :=  h.userService.GetByID(ctx.Request().Context(), req.ID)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, response.ErrorResponse(http.StatusInternalServerError, err.Error()))
 	}
 
-	err = h.userService.Delete(ctx.Request().Context(), movie)
+	err = h.userService.Delete(ctx.Request().Context(), user)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, response.ErrorResponse(http.StatusInternalServerError, err.Error()))
 	}
@@ -126,29 +127,29 @@ func (h *UserHandler) DeleteUser(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, response.SuccessResponse("successfully deleting User", nil))
 }
 
-func (h *UserHandler) ResetPassword(ctx echo.Context) error {
-	var req dto.ResetPasswordRequest
-	if err := ctx.Bind(&req); err != nil {
-		return ctx.JSON(http.StatusBadRequest, response.ErrorResponse(http.StatusBadRequest, err.Error()))
-	}
-	err := h.userService.ResetPassword(ctx.Request().Context(), req)
-	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, response.ErrorResponse(http.StatusInternalServerError, err.Error()))
-	}
+// func (h *UserHandler) ResetPassword(ctx echo.Context) error {
+// 	var req dto.ResetPasswordRequest
+// 	if err := ctx.Bind(&req); err != nil {
+// 		return ctx.JSON(http.StatusBadRequest, response.ErrorResponse(http.StatusBadRequest, err.Error()))
+// 	}
+// 	err := h.userService.ResetPassword(ctx.Request().Context(), req)
+// 	if err != nil {
+// 		return ctx.JSON(http.StatusInternalServerError, response.ErrorResponse(http.StatusInternalServerError, err.Error()))
+// 	}
 
-	return ctx.JSON(http.StatusOK, response.SuccessResponse("successfully reset password", nil))
-}
+// 	return ctx.JSON(http.StatusOK, response.SuccessResponse("successfully reset password", nil))
+// }
 
-func (h *UserHandler) VerifyEmail(ctx echo.Context) error {
-	var req dto.VerifyEmailRequest
-	if err := ctx.Bind(&req); err != nil {
-		return ctx.JSON(http.StatusBadRequest, response.ErrorResponse(http.StatusBadRequest, err.Error()))
-	}
+// func (h *UserHandler) VerifyEmail(ctx echo.Context) error {
+// 	var req dto.VerifyEmailRequest
+// 	if err := ctx.Bind(&req); err != nil {
+// 		return ctx.JSON(http.StatusBadRequest, response.ErrorResponse(http.StatusBadRequest, err.Error()))
+// 	}
 
-	err:= h.userService.VerifyEmail(ctx.Request().Context(), req)
-	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, response.ErrorResponse(http.StatusInternalServerError, err.Error()))
-	}
+// 	err:= h.userService.VerifyEmail(ctx.Request().Context(), req)
+// 	if err != nil {
+// 		return ctx.JSON(http.StatusInternalServerError, response.ErrorResponse(http.StatusInternalServerError, err.Error()))
+// 	}
 
-	return ctx.JSON(http.StatusOK, response.SuccessResponse("successfully verify email", nil))
-}
+// 	return ctx.JSON(http.StatusOK, response.SuccessResponse("successfully verify email", nil))
+// }
