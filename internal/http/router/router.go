@@ -13,7 +13,6 @@ var(
 	allRoles = []string{"Administrator", "User"}
 )
 
-
 func PublicRoutes(userHandler handler.UserHandler) []route.Route{
 	return []route.Route{
 		{
