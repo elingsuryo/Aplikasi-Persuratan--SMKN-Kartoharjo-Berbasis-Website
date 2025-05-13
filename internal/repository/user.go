@@ -9,7 +9,7 @@ import (
 )
 
 type UserRepository interface {
-	GetByUsername(ctx context.Context, username string) (*entity.User, error)
+	GetByEmail(ctx context.Context, email string) (*entity.User, error)
     // GetByResetPasswordToken(ctx context.Context, token string) (*entity.User, error)
     // GetByVerifyEmailToken(ctx context.Context, token string) (*entity.User, error)
 	GetAll(ctx context.Context) ([]entity.User, error)
@@ -27,10 +27,10 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 	return &userRepository{db}
 }
 
-func (u *userRepository) GetByUsername(ctx context.Context, username string) (*entity.User, error) {
+func (u *userRepository) GetByEmail(ctx context.Context, email string) (*entity.User, error) {
 	result := new(entity.User)
 
-	if err := u.db.WithContext(ctx).Where("username = ?", username).First(&result).Error; err != nil {
+	if err := u.db.WithContext(ctx).Where("email = ?", email).First(&result).Error; err != nil {
 		return nil, err
 	}
 	return result, nil

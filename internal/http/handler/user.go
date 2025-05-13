@@ -26,7 +26,7 @@ func (h *UserHandler) Login(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, response.ErrorResponse(http.StatusBadRequest, err.Error()))
 	}
 	
-	claims, err := h.userService.Login(ctx.Request().Context(), req.Username, req.Password)
+	claims, err := h.userService.Login(ctx.Request().Context(), req.Email, req.Password)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, response.ErrorResponse(http.StatusInternalServerError, err.Error()))
 	}

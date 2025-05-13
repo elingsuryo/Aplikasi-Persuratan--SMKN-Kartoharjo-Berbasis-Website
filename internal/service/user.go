@@ -15,7 +15,7 @@ import (
 )
 
 type UserService interface {
-	Login(ctx context.Context, username string, password string) (*entity.JwtCustomClaims, error)
+	Login(ctx context.Context, email string, password string) (*entity.JwtCustomClaims, error)
 	Register(ctx context.Context, req dto.UserRegisterRequest) error
 	GetAll(ctx context.Context) ([]entity.User, error)
 	GetByID(ctx context.Context, id int64) (*entity.User, error)
@@ -38,20 +38,20 @@ func NewUserService(cfg *config.Config, userRepository repository.UserRepository
 	return &userService{cfg, userRepository}
 }
 
-func (s *userService) Login(ctx context.Context, username string, password string) (*entity.JwtCustomClaims, error) {
-	user, err := s.userRepository.GetByUsername(ctx, username)
+func (s *userService) Login(ctx context.Context, email string, password string) (*entity.JwtCustomClaims, error) {
+	user, err := s.userRepository.GetByEmail(ctx, email)
 	if err != nil {
-		return nil, errors.New("username atau password salah")
+		return nil, errors.New("email atau password salah")
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		return nil, errors.New("username atau password salah")
+		return nil, errors.New("email atau password salah")
 	}
 
 	expiredTime := time.Now().Add(time.Minute * 10)
 
 	claims := &entity.JwtCustomClaims{
-		Username: user.Username,
+		Email: user.Email,
 		FUllName: user.FullName,
 		Role:     user.Role,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -65,17 +65,17 @@ func (s *userService) Login(ctx context.Context, username string, password strin
 
 func (s *userService) Register(ctx context.Context, req dto.UserRegisterRequest) error {
 	user := new(entity.User)
-	user.Username = req.Username
+	user.Email = req.Email
 	user.FullName = req.FullName
 	user.Role = "Administrator"
 
-	exist, err := s.userRepository.GetByUsername(ctx, req.Username)
-	if err == nil && exist != nil {
-		return errors.New("username sudah terdaftar")
-	}
-	if err != nil {
-	return err
-	}
+	// exist, err := s.userRepository.GetByEmail(ctx, req.Email)
+	// if err == nil && exist != nil {
+	// 	return errors.New("Email sudah terdaftar")
+	// }
+	// if err != nil {
+	// return err
+	// }
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -97,14 +97,14 @@ func (s userService) GetByID(ctx context.Context, id int64) (*entity.User, error
 
 func (s userService) Create(ctx context.Context, req dto.UserCreateRequest) error{
 	User := &entity.User{
-		Username: req.Username,
+		Email: req.Email,
 		Password: req.Password,	
 		FullName: req.FullName,
 		Role: req.Role,
 	}
-	exist, err := s.userRepository.GetByUsername(ctx, req.Username)
+	exist, err := s.userRepository.GetByEmail(ctx, req.Email)
 	if err == nil && exist != nil {
-		return errors.New("username sudah terdaftar")
+		return errors.New("email sudah terdaftar")
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -122,8 +122,8 @@ func (s userService) Update(ctx context.Context, req dto.UserUpdateRequest) erro
 	if err != nil {
 		return err
 	}
-	if req.Username != "" {
-		user.Username = req.Username
+	if req.Email != "" {
+		user.Email = req.Email
 	}
 	if req.FullName != "" {
 		user.FullName = req.FullName
@@ -161,10 +161,10 @@ func (s userService) Delete(ctx context.Context, user *entity.User) error{
  
 // }
 
-// func (s *userService) RequestResetPassword(ctx context.Context, username string) error {
-// 	user, err := s.userRepository.GetByUsername(ctx, username)
+// func (s *userService) RequestResetPassword(ctx context.Context, email string) error {
+// 	user, err := s.userRepository.GetByemail(ctx, email)
 // 	if err != nil {
-// 		return errors.New("username tidak ditemukan")
+// 		return errors.New("email tidak ditemukan")
 // 	}
 	
 
